@@ -103,6 +103,10 @@ const bootcampSchema = new mongoose.Schema({
     }
     
 
+},
+{
+    toJSON: {virtuals: true},
+    toObject : {virtuals: true}
 })
 
 bootcampSchema.pre('save', function(next){
@@ -127,6 +131,19 @@ bootcampSchema.pre('save', async function(next){
 
     this.address = undefined
 
+    next()
+})
+
+bootcampSchema.virtual('courses',{
+    ref: 'Course',
+    localField: '_id',
+    foreignField: 'bootcamp',
+    justOne: false
+})
+
+//delete courses associated with a bootcamp once the bootcamp has been deleted
+bootcampSchema.pre('remove', async function(next){
+    await this.model('Course').deleteMany({bootcamp: this._id})
     next()
 })
 

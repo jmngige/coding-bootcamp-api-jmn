@@ -6,6 +6,10 @@ const {
 
 const router = express.Router()
 
+//create a course router
+const courseRouter = require('./courses')
+
+router.use('/:bootcamp/courses', courseRouter)
 
 //create a bootcamp
 router.route('/bootcamps').post(createBootcamp)

@@ -11,6 +11,7 @@ dotenv.config({ path: './config/.env'})
 
 
 const bootcamps = require('./routes/bootcamps')
+const courses = require('./routes/courses')
 
 //database connection
 dbConnect()
@@ -28,6 +29,7 @@ app.use(express.json())
 
 //load express routes
 app.use('/api/v1', bootcamps)
+app.use('/api/v1', courses)
 
 
 //initialize error handling middleware
