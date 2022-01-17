@@ -6,12 +6,12 @@ const errorHandler = (err, req, res, next)=>{
     error.message = err.message
 
     if(err.name === "CastError"){
-        const message = `Bootcamp with id ${err.value} not found`
+        const message = `Value with id ${err.value} not found`
         error = new ErrorResponse(message, 404)
     }
 
     if(err.code === 11000){
-        const message = `Bootcamp already exists or it has duplicate keys`
+        const message = `Duplicate keys found`
         error = new ErrorResponse(message, 400)   
     }
 

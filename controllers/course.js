@@ -21,9 +21,9 @@ exports.getCourses = asyncHandler( async( req, res, next)=>{
 
     let query
     //req.body.bootcamp = req.params.bootcampId
-    if(req.params.bootcamp){
+    if(req.params.bootcampId){
 
-        query = Course.find({bootcamp: req.params.bootcamp})
+        query = Course.find({bootcamp: req.params.bootcampId})
 
 
     } else {

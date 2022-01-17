@@ -1,4 +1,5 @@
 const Bootcamp = require('../models/bootcamps')
+const path = require('path')
 const ErrorResponse = require('../utils/errorResponse')
 const geocoder = require('../utils/geocoder')
 const asyncHandler = require('../middlewares/async')
@@ -100,6 +101,46 @@ exports.updateBootcamp = asyncHandler( async (req, res, next)=>{
         success: true,
         bootcamp
     })  
+})
+
+exports.uploadPhoto = asyncHandler (async (req, res, next)=>{
+
+    const bootcamp = await Bootcamp.findById(req.params.id)
+
+    if(!bootcamp){
+        return next(new ErrorResponse(`Bootcamp requested not found`, 404))
+    }
+
+    if(!req.files){
+        return next(new ErrorResponse(`Please select file for upload`, 404))
+    }
+
+    const file = req.files.file
+    //check file is of type image we use memetype
+    if(!file.mimetype.startsWith('image')){
+        return next(new ErrorResponse('Please upload an image file', 400))
+    }
+    //check the file size not to exceed required file size
+    if(file.size > process.env.PHOTO_SIZE){
+        return next(new ErrorResponse(`The file upload is too large, try uploading file not more than ${process.env.PHOTO_SIZE}`, 400))
+    }
+    //rename the file with a uniue name to prevent overwriting
+    file.name = `${bootcamp.id}_${Date.now()}${path.parse(file.name).ext}`
+
+    //move the file to the desired location
+    file.mv(`${process.env.PHOTO_PATH}/${file.name}`, err=>{
+        if(err){
+            console.error(err)
+        }
+    })
+
+    const update = await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name })
+
+    res.status(200).json({
+        success: true,
+        update
+    })
+
 })
 
 //delete a bootcamp by id
