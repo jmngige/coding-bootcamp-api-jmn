@@ -38,9 +38,20 @@ exports.loginUser = async (req, res, next)=>{
         return next(new ErrorResponse('Invalid email or password provided', 404))
     }
 
-    
-
     sendToken(user, 200, res)
    
-
 }
+
+exports.getProfile = asyncHandler( async (req, res, next)=>{
+
+    const user = await User.findById(req.user.id)
+
+    if(!user){
+        return next(new ErrorResponse('User does not exist', 404))
+    }
+
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
